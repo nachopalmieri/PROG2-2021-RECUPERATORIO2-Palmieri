@@ -11,6 +11,8 @@ namespace LogicaNegocios
     {
         //Listas
         public List<Movimiento> ListaMovimientos { get; set; }
+        //ERROR DE MODELADO, LOS USUARIOS SON SIEMPRE LOS MISMOS Y DEBERIAN ESTAR EN UNA SOLA LISTA. 
+        //UNA VEZ RECIBE, OTRA VEZ PUEDE ENVIAR.
         public List<UsuarioRecibe> ListaUsuariosRecibe { get; set; }
         public List<UsuarioEnvia> ListaUsuariosEnvia { get; set; }
 
@@ -56,6 +58,10 @@ namespace LogicaNegocios
                     movimiento.UsuarioEnvia.ListaMovimientos.Add(movimiento);
                     movimiento.UsuarioRecibe.ListaMovimientos.Add(movimiento);
 
+                    //PROBLEMA DE DISEÑO.
+                    //USUARIO.CS DEBERIA TENER UN METODO UNICO QUE HAGA LAS 2 COSAS, MODIFICAR SALDO Y AGREGAR A LISTA EL MOVIEMIENTO
+                    //DE ESA MANERA NO TENES QUE ENCADENAR ACCIONES RELACIONADAS
+
                     ListaMovimientos.Add(movimiento);
 
                 }
@@ -91,6 +97,7 @@ namespace LogicaNegocios
             {
                 if (movimiento.Id == idMovimiento)
                 {
+                    //NO SE PEDIA ELIMINAR EL MOVIMIENTO SINO GENERAR UNO INVERSO.
                     ListaMovimientos.Remove(movimiento);
 
                     return new Resultado(true, $"(El movimiento {movimiento.Id} fue cancelado.");
@@ -99,6 +106,7 @@ namespace LogicaNegocios
             return new Resultado(false, "Eliminacion incorrecta.");
         }
 
+        //INNECESARIO, ES UNA SOLA SENTENCIA
         private bool ValidarMontoEnvio(int monto, UsuarioEnvia usuarioEnvia)
         {
             if (monto <= usuarioEnvia.Saldo)
@@ -109,6 +117,7 @@ namespace LogicaNegocios
             return false;
         }
 
+        //ESTOS DOS PODRIAN SER EL MISMO METODO YA QUE SON IGUALES
         private UsuarioRecibe ValidarExistenciaUsuarioRecibe(int dni)
         {
             return ListaUsuariosRecibe.FirstOrDefault(x => x.Dni == dni);
